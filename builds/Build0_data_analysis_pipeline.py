@@ -18,9 +18,10 @@ import json
 from pathlib import Path
 from typing import Optional, Tuple, List, Dict, Any
 
-import numpy as np
+# import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import statsmodels.formula.api as smf
 
 # -----------------------------
 # Utilities
@@ -129,7 +130,7 @@ def summarize_categorical(
 
 
 # -----------------------------
-# REQUIRED: Student-built functions
+# Missingness
 # -----------------------------
 def missingness_table(df: pd.DataFrame) -> pd.DataFrame:
     # Calculate missing rate (fraction missing) for each column
@@ -320,23 +321,68 @@ def plot_histograms(
         plt.close()
 
 
+from pathlib import Path
+from typing import List, Optional
+
+
+from pathlib import Path
+from typing import List, Optional
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
 def plot_bar_charts(
     df: pd.DataFrame,
-    cat_cols: List[str],
-    fig_dir: Path,
+    # Router/LLM-friendly args
+    x: Optional[str] = None,  # categorical column (preferred)
+    y: Optional[str] = None,  # ignored for bar charts (kept to avoid tool-call crashes)
+    # Back-compat args
+    cat_cols: Optional[List[str]] = None,
+    column: Optional[str] = None,
+    # Output control
+    fig_dir: Optional[Path] = None,
     max_cols: int = 12,
     top_k: int = 20,
 ) -> None:
-    """Plot bar charts for categorical columns."""
+    """Save bar charts for categorical columns (top_k categories).
+
+    Accepts any ONE of:
+      - x="species"            (router style)
+      - column="species"       (older style)
+      - cat_cols=["species","island"]
+
+    'y' is accepted for compatibility with (x, y) tool suggestions, but is not used.
+    """
+
+    # ---- Resolve output directory ----
+    if fig_dir is None:
+        fig_dir = Path("figures")
+    else:
+        fig_dir = Path(fig_dir)
+    fig_dir.mkdir(parents=True, exist_ok=True)
+
+    # ---- Normalize column arguments ----
+    provided = [arg is not None for arg in (cat_cols, column, x)]
+    if sum(provided) > 1:
+        raise ValueError("Provide only one of: 'cat_cols', 'column', or 'x'.")
+
+    if cat_cols is None:
+        if column is not None:
+            cat_cols = [column]
+        elif x is not None:
+            cat_cols = [x]
+        else:
+            raise ValueError("Provide one of: 'cat_cols', 'column', or 'x'.")
+
+    # ---- Plot ----
     for c in cat_cols[:max_cols]:
-        series = df[c].astype("string").dropna()
-        if series.empty:
-            continue
-        vc = series.value_counts().head(top_k)
+        if c not in df.columns:
+            raise ValueError(f"Column not found: '{c}'")
+
         plt.figure()
-        plt.bar(vc.index.astype(str), vc.values)
-        plt.title(f"Top {min(top_k, len(vc))} values: {c}")
-        plt.xticks(rotation=90, fontsize=7)
+        counts = df[c].astype("string").value_counts(dropna=True).head(top_k)
+        counts.plot(kind="bar")
+        plt.title(f"Top {min(top_k, len(counts))} values: {c}")
         plt.tight_layout()
         plt.savefig(fig_dir / f"bar_{c}.png", dpi=200)
         plt.close()
