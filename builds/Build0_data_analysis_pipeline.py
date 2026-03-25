@@ -18,7 +18,7 @@ import json
 from pathlib import Path
 from typing import Optional, Tuple, List, Dict, Any
 
-# import numpy as np
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import statsmodels.formula.api as smf
