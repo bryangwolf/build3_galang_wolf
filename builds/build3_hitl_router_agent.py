@@ -38,6 +38,8 @@ To interact with the agent, use the following commands:
     code <request>               Force code generation (HITL) + approve to save
     run                          Execute last approved script via subprocess (HITL)
     exit                         Quit
+
+    TESTING COMMIT
 """
 
 from __future__ import annotations
