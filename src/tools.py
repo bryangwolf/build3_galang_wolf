@@ -20,6 +20,7 @@ TOOLS = {
     "split_columns": profiling.split_columns,
     # modeling
     "multiple_linear_regression": modeling.multiple_linear_regression,
+    "simple_linear_regression": modeling.simple_linear_regression,
     # plotting
     "plot_missingness": plotting.plot_missingness,
     "plot_corr_heatmap": plotting.plot_corr_heatmap,

@@ -4,6 +4,17 @@ from typing import Optional, List, Dict, Any
 import pandas as pd
 import statsmodels.formula.api as smf
 
+def simple_linear_regression(data, x, y):
+    """
+    Run a simple linear regression and return coefficients.
+    """
+
+    X = data[[x]]
+    X = smf.add_constant(X)
+
+    model = smf.OLS(data[y], X).fit()
+
+    return model.summary().as_text()
 
 def multiple_linear_regression(
     df: pd.DataFrame,
@@ -61,3 +72,6 @@ def multiple_linear_regression(
         "stderr": {str(k): float(v) for k, v in fitted.bse.items()},
     }
     return out
+
+
+

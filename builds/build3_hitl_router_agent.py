@@ -1,4 +1,6 @@
 """
+INSTRUCTIONS: 
+
 build3: HITL + Router (Tool Routing + Optional CodeGen/Execute)
 + Langfuse tracing (LangChain callbacks + observe decorator)
 
@@ -740,7 +742,8 @@ def build_router_chain(
     - Histograms -> plot_histograms
     - Bar charts (categorical counts) -> plot_bar_charts
     - Categorical vs numeric boxplot -> plot_cat_num_boxplot
-    - Linear regression -> multiple_linear_regression
+    - Simple linear regression -> simple_linear_regression
+    - Multivariate regression -> multiple_linear_regression           
     - Validate outcome/target column -> target_check
 
     Tool-specific argument rules:

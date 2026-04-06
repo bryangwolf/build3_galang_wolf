@@ -10,7 +10,6 @@ import numpy as np
 from langchain_openai import OpenAIEmbeddings
 from pypdf import PdfReader
 
-
 @dataclass
 class RagChunk:
     text: str
